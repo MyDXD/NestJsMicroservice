@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from '../../entities/category.entity';
 import { Repository } from 'typeorm';
+import { response } from 'express';
 
 @Injectable()
 export class CategoryService {
@@ -13,14 +14,13 @@ export class CategoryService {
   ) {}
 
   async createCategory(categoryData: CreateCategoryDto): Promise<Category> {
-
-    if (!categoryData.name) {
-      throw new Error('Name is required');
-    }
-
+    try {
     const category = this.categoryRepository.create(categoryData);
-
-    return this.categoryRepository.save(category);
+    this.categoryRepository.save(category)
+    return category;
+    } catch (error) {
+      return error
+    }
   }
 
   // Method สำหรับดึงข้อมูล Category ทั้งหมด
