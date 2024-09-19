@@ -15,11 +15,11 @@ export class CategoryService {
 
   async createCategory(categoryData: CreateCategoryDto): Promise<Category> {
     try {
-    const category = this.categoryRepository.create(categoryData);
-    this.categoryRepository.save(category)
-    return category;
+      const category = this.categoryRepository.create(categoryData);
+      this.categoryRepository.save(category);
+      return category;
     } catch (error) {
-      return error
+      return error;
     }
   }
 
@@ -29,18 +29,22 @@ export class CategoryService {
   }
 
   async findOne(id: number): Promise<Category> {
-    const category = await this.categoryRepository.findOne({ where: { id }, relations: ['products'] });
+    const category = await this.categoryRepository.findOne({
+      where: { id },
+      relations: ['products'],
+    });
     if (!category) {
       return null; // ส่งคืน null ถ้าไม่พบ
     }
     return category; // ส่งคืนข้อมูล category
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+    await this.categoryRepository.update(id, updateCategoryDto);
+    return await this.categoryRepository.findOneBy({ id });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number): Promise<void> {
+    await this.categoryRepository.delete(id);
   }
 }
